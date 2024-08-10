@@ -16,7 +16,7 @@ export const register = async (req, res) => {
 
     }
     
-        const user = await User.findOne({ email });
+        let  user = await User.findOne({ email });
         if (user) {
           return res.status(400).json({
             message: "User already exist with this email.",
@@ -32,7 +32,7 @@ export const register = async (req, res) => {
     const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    user  =await User.create({
       fullname,
       email,
       phoneNumber,
@@ -53,7 +53,7 @@ export const register = async (req, res) => {
     return res.status(201).cookie("token",token,{
       maxAge: 1 * 24 * 60 * 60 * 1000,
       httpsOnly: true,
-      sameSite: "strict",
+    
     }).json({
       message: "Account created successfully.",
       success: true,
@@ -117,7 +117,7 @@ export const login = async (req, res) => {
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpsOnly: true,
-        sameSite: "strict",
+       
       })
       .json({
         message: `Welcome back ${user.fullname}`,
