@@ -50,13 +50,10 @@ export const register = async (req, res) => {
     });
 
 
-    return res.status(201).cookie("token",token,{
-      maxAge: 1 * 24 * 60 * 60 * 1000,
-      httpsOnly: true,
-    
-    }).json({
+    return res.status(201).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: false }).json({
       message: "Account created successfully.",
       success: true,
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -67,8 +64,8 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
-
-    if (!email || !password || !role) {
+    console.log(req.body)
+    if (!email || !password ) {
       return res.status(400).json({
         message: "Something is missing",
         success: false,
@@ -99,6 +96,7 @@ export const login = async (req, res) => {
     const tokenData = {
       userId: user._id,
     };
+
     const token = jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
@@ -113,19 +111,21 @@ export const login = async (req, res) => {
     };
 
     return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-   
-       
-      })
-      .json({
+      .status(200).cookie("token",token,{
+         sameSite: 'None',
+    
+     
+ 
+      
+         maxAge: 1000 * 60 * 60 * 24,
+      }).json({
         message: `Welcome back ${user.fullname}`,
         user,
+        token,
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.log(error,"errpr");
   }
 };
 export const logout = async (req, res) => {
