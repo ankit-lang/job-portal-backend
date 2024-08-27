@@ -13,7 +13,7 @@ dotenv.config({});
 const app = express();
 
 const corsOptions = {
-    origin:['http://localhost:5173',"https://job-portal-frontend-steel.vercel.app/"],
+    origin:'*',
     credentials:true
 }
 
