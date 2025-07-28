@@ -14,6 +14,8 @@ export const register = async (req, res) => {
                 success: false
             });
         };
+        if (!req.file) return res.status(400).json({ message: "No file uploaded",success: false });
+            
         const file = req.file;
         const fileUri = getDataUri(file);
         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
@@ -81,7 +83,8 @@ export const login = async (req, res) => {
         const tokenData = {
             userId: user._id
         }
-        const token = await jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
+
+        const token = await jwt.sign(tokenData, process.env.SECRET_KEY ? process.env.SECRET_KEY:"ankit" , { expiresIn: '7d' });
 
         user = {
             _id: user._id,
@@ -92,7 +95,7 @@ export const login = async (req, res) => {
             profile: user.profile
         }
 
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'none' }).json({
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000,  }).json({
             message: `Welcome back ${user.fullname}`,
             user,
             success: true

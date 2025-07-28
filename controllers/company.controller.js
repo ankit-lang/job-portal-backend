@@ -73,6 +73,9 @@ export const updateCompany = async (req, res) => {
     try {
         const { name, description, website, location } = req.body;
  
+        if(!req.file) return res.status(400).json({
+            message: "Company logo is required. ,success: false"});
+
         const file = req.file;
         // idhar cloudinary ayega
         const fileUri = getDataUri(file);
